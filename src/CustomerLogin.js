@@ -1,5 +1,5 @@
 
-import * as React from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -54,18 +54,18 @@ export default function CustomerLogin({
   onRegister, 
   initialValues,
 }) {
-  const [mode, setMode] = React.useState("login"); // "login" | "register"
-  const [values, setValues] = React.useState({
+  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [values, setValues] = useState({
     customerName: "",
     username: "",
     email: initialValues?.email ?? "",
     password: "",
     confirm: "",
   });
-  const [errors, setErrors] = React.useState({});
-  const [submitting, setSubmitting] = React.useState(false);
-  const [serverError, setServerError] = React.useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
