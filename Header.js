@@ -1,23 +1,33 @@
-import React from 'react';
-import 
+import React, { useState } from 'react';
+import { AppBar, Toolbar, InputBase, IconButton, Typography, Box } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
- const Header = () =>{
-    return(
-      <div class = "search-container">
-        <input type = "text" id = "searhInput" placeholder = "Search books, authors and genres">
-        <button id = "searchButton"> Search </button>
-      </div>
-    );
-  <button onclick="document.getElementById('demo').innerHTML=Date()">The time is?</button>
-  }
+const Header = () => {
+  const [query, setQuery] = useState('');
+
+  const handleSearch = () => {
+    console.log("Search for:", query);
+  };
+
+  return (
+    <AppBar position="static" sx={{ mb: 2 }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h6">Book Search</Typography>
+ 
+          <InputBase
+            placeholder="Search books, authors and genres"
+            inputProps={{ 'aria-label': 'search' }}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            sx={{ ml: 1, flex: 1 }}
+          />
+          <IconButton onClick={handleSearch} aria-label="search">
+            <SearchIcon />
+          </IconButton>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 export default Header;
-
-
-
-<nav style = {}>
-        <Link to = "/" style = {}> Home </Link>
-        <Link to = "/browse" style = {}> Browse </Link>
-        <Link to = "/cart" style = {}> Cart </Link>
-        <Link to = "/account" style = {}> Account </Link>
-      </nav>
