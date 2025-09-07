@@ -1,32 +1,23 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, InputBase, IconButton, Typography, Box } from '@mui/material';
+import React, {useState} from 'react';
+import {InputBase, IconButton, Typography} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 const Header = () => {
+  //used for user input
   const [query, setQuery] = useState('');
-
-  const handleSearch = () => {
-    console.log("Search for:", query);
   };
 
   return (
-    <AppBar position="static" sx={{ mb: 2 }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h6">Book Search</Typography>
- 
+ //take input from user and sets the value of query to the user input
           <InputBase
-            placeholder="Search books, authors and genres"
+            placeholder="Search books, authors and genres" //placeholder text
             inputProps={{ 'aria-label': 'search' }}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            sx={{ ml: 1, flex: 1 }}
+            sx={{ ml: 1, flex: 1 }} //spacing
           />
-          <IconButton onClick={handleSearch} aria-label="search">
-            <SearchIcon />
-          </IconButton>
-        </Box>
-      </Toolbar>
-    </AppBar>
+      <SearchIcon />
   );
 };
 
