@@ -24,6 +24,13 @@
   color: white;
 }
 
+.App-footer{ 
+  text-align: right;
+  position: fixed;
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+}
+
 .App-link {
   color: #61dafb;
 }
