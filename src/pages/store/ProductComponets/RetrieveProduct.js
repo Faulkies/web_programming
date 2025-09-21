@@ -5,18 +5,7 @@ import { useState, useEffect } from "react";
 const RetrieveProductById = () => {
   const [product, setProduct] = useState({});
   const id =5;
-  // useEffect(() => {
-  //   axios.get("http://localhost:3001/api/inft3050/Product/5", {
-  //     headers: { Accept: "application/json" }
-  //   })
-  //   .then((response) => {
-  //     console.log(response.data);
-  //     setProduct(response.data);
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //   });
-  // }, []);
+  
 
   useEffect(() => {
   async function load() {
