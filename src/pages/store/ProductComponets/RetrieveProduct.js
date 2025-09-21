@@ -1,43 +1,42 @@
 import axios from "axios";
-
-// choose the correct backend port (8080 OR 3001)
-const api = axios.create({
-  baseURL: "http://localhost:8080",
-  headers: {
-    Accept: "application/json",
-    "xc-token": "sPi8tSXBw3BgursDPmfAJz8B3mPaHA6FQ9PWZYJZ",
-  },
-});
-
-// test call
-api.get("/api/inft3050/BookGenre")
-  .then(res => console.log(res.data))
-  .catch(err => console.error("BookGenre error:", err));
-
-// component example
-import ItemCard from "../ItemComponets/ItemCard";
+import ProductCard from "./ProductCard";
 import { useState, useEffect } from "react";
 
 const RetrieveProductById = () => {
-  const [product, setProduct] = useState(null);
-  const [err, setErr] = useState("");
+  const [product, setProduct] = useState({});
+  const id =5;
+  // useEffect(() => {
+  //   axios.get("http://localhost:3001/api/inft3050/Product/5", {
+  //     headers: { Accept: "application/json" }
+  //   })
+  //   .then((response) => {
+  //     console.log(response.data);
+  //     setProduct(response.data);
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
+  // }, []);
 
   useEffect(() => {
-    api.get("/api/inft3050/Product/4")
-      .then(({ data }) => setProduct(data))
-      .catch(e => setErr(e.message));
-  }, []);
-
-  if (err) return <p>Error: {err}</p>;
-  if (!product) return <p>Loading…</p>;
-
+  async function load() {
+    const [pRes, sRes] = await Promise.all([
+      axios.get(`http://localhost:3001/api/inft3050/Product/${id}`),
+      axios.get(`http://localhost:3001/api/inft3050/Stocktake/${id}`)
+    ]);
+    console.log(pRes);
+    setProduct({ ...pRes.data, ...sRes.data });
+     // brings in price/quantity
+  }
+  load();
+}, [id]);
+  console.log(product);
   return (
-    <ItemCard
-      name={product.name}
-      author={product.author}
-      genre={product.genre}
-      price={product.price}
-      image={product.image}
+    <ProductCard
+      name={product.Name}
+      author={product.Author}
+      price={product.Price}
+      
     />
   );
 };

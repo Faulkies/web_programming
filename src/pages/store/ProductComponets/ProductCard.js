@@ -2,17 +2,12 @@ import React from "react";
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography
 } from "@mui/material";
 
-const ItemCard = () => {
+const ProductCard = ({ name, author, price }) => {
     //will convert to props when connecting to database
-    const itemName = "Harry Potter";
-    const itemGenre = "Movie";
-    const itemAuthor = "Chris Coloumbus";
-
-    const itemPrice = "$15.55";
+    
 
     return (
         <Card
@@ -29,17 +24,17 @@ const ItemCard = () => {
             {/* Content */}
             <CardContent>
                 <Typography variant="subtitle1" fontWeight="bold">
-                    {itemName}
+                    {name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    {itemAuthor}
+                    {author}
                 </Typography>
                 <Typography variant="body1" fontWeight="medium" mt={1}>
-                    {itemPrice}
+                    ${price}
                 </Typography>
             </CardContent>
         </Card>
     );
 };
 
-export default ItemCard;
+export default ProductCard;

@@ -16,7 +16,7 @@ const AddProduct = () => {
   };
 
   const handleSubmit = () => {
-    axios.post("http://localhost:8080/api/inft3050/Product", form)
+    axios.post("http://localhost:3001/api/inft3050/Product", form)
       .then(() => alert("Product added!"))
       .catch((err) => console.error(err));
   };

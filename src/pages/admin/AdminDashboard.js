@@ -1,22 +1,30 @@
 import { Button, Stack, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
+
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
 
   return (
-    <Stack spacing={3} p={4}>
-      <Typography variant="h4" fontWeight="bold">Admin Dashboard</Typography>
+        <Stack spacing={3} p={4}>
+        <Typography variant="h4" fontWeight="bold">Admin Dashboard</Typography>
 
-      <Stack direction="row" spacing={2}>
-        <Button variant="contained" onClick={() => navigate("/admin/products")}>
-          Manage Products
-        </Button>
-        <Button variant="outlined" onClick={() => navigate("/admin/add-product")}>
-          Add Product
-        </Button>
-      </Stack>
-    </Stack>
+        <Stack direction="row" spacing={2}>  
+
+            <Link to="/Admin/ProductList">
+                <Button variant="contained"  >
+                    Manage Products
+                </Button> 
+            </Link>
+          
+            <Link to="/Admin/AddProduct">
+                <Button variant="outlined"  >
+                    Add Product
+                </Button>
+            </Link>
+
+             
+        </Stack>
+        </Stack>
   );
 };
 

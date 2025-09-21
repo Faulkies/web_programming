@@ -15,12 +15,12 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
-  Link,
   Divider
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {Link} from "react-router-dom";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -237,9 +237,11 @@ export default function CustomerLogin({
 
           {isLogin && (
             <>
-            <Button type="button" size="small" onClick={handleForgotPassword}> 
-                Forgot Password?
-          </Button>
+            <Link to="/ForgotPassword">
+              <Button type="button" size="small" > 
+                  Forgot Password?
+              </Button>
+            </Link>
 
             <Divider sx={{ my: 2 }} />
             </>
