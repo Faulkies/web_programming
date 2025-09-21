@@ -15,7 +15,6 @@ const RetrieveProductById = () => {
     ]);
     console.log(pRes);
     setProduct({ ...pRes.data, ...sRes.data });
-     // brings in price/quantity
   }
   load();
 }, [id]);
