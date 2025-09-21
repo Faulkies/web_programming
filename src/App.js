@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Link, Route, } from "react-router-dom"
 import './App.css';
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductList from "./pages/admin/ProductList";
-import Home from './pages/store/home/Home';
-import ForgotPassword from './pages/store/auth/ForgotPassword';
-import AddProduct from "./pages/admin/AddProduct";
+import Home from "./pages/store/Home/Home";
+import ForgotPassword from "./pages/store/auth/ForgotPassword";
+
 function App() {
   return (
     <Router>

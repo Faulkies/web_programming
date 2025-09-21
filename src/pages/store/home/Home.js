@@ -1,5 +1,5 @@
 import CustomerLogin from "../auth/CustomerLogin.js"
-import RetrieveProductById from "../productComponets/RetrieveProduct.js";
+import RetrieveProductById from "../product_componets/RetrieveProduct.js";
 import AdminDashboard from "../../admin/AdminDashboard.js";
 
 

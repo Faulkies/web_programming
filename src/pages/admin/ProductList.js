@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import  ProductCard  from "../store/productComponets/ProductCard";
+import ProductCard from "../store/product_componets/ProductCard";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
