@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import './App.css';
 //import footer from './footer.js';
@@ -11,19 +10,19 @@ function App() {
       id: 1,
       name: 'Game',
       price: 10.99,
-      image: 'https://via.image.com/text=Game',
+      image: 'https://image.com/text=Game',
     },
     {
       id: 2,
       name: 'Movie',
       price: 30.99,
-      image: 'https://via.image.com/text=Movie',
+      image: 'https://image.com/text=Movie',
     },
     {
       id: 3,
       name: 'Book',
       price: 29.99,
-      image: 'https://via.image.com/text=Book',
+      image: 'https://image.com/text=Book',
     },
   ];
 
