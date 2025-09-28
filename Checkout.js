@@ -4,7 +4,7 @@ import './App.css';
 //import header from './header.js';
 
 function App() {
-  // List of items in the user's cart
+  // TODO: Import database and test the display of items 
   const itemsInCart = [
     {
       id: 1,
@@ -39,7 +39,7 @@ for (const item of itemsInCart){
 
   // Placeholder for what happens when user clicks "Proceed to payment"
   const handleCheckoutClick = () => {
-    // Could link to a payment screen or confirmation screen later
+    // TODO: Possibly link to payment screen or confirmation screen
    
   };
 
@@ -49,7 +49,7 @@ for (const item of itemsInCart){
       <header />
 
       <div style={styles.layout}>
-        {/* Cart details displayed on  left-hand side */}
+  {/* Cart details displayed on  left-hand side */}
         <div style={styles.cartBox}>
           {itemsInCart.map((product) => (
             <div key={product.id} style={styles.cartLine}>
@@ -57,20 +57,20 @@ for (const item of itemsInCart){
               <span>${product.price.toFixed(2)}</span>
             </div>
           ))}
-        {/* Total price and quantity details */}
+{/* Total price and quantity details */}
           <div style={styles.totalLine}>
             <strong>Total:</strong> ${totalCost.toFixed(2)}
             <div style={styles.itemCountBox}>{numberOfItems}</div>
           </div>
         
-        {/* Payment button */}
+{/* Payment button */}
           <button style={styles.checkoutButton} onClick={handleCheckoutClick}>
             Proceed to payment
           </button>
 
         </div>  
 
-        {/* Display of images of all cart items on right-hand side */}
+{/* Display of images of all cart items on right-hand side */}
         <div style={styles.imageList}>
           {itemsInCart.map((product) => (
             <img key={product.id} 
@@ -78,7 +78,7 @@ for (const item of itemsInCart){
             alt={product.name} 
             style={styles.productImage}
             />
-          ))}
+        ))}
         </div>
       </div>
     </div>
@@ -115,11 +115,9 @@ const styles = {
     borderBottom: '1px solid white',
   },
   totalLine: {
-    marginTop: 10,
     fontWeight: 'bold',
   },
   checkoutButton: {
-    marginTop: 15,
     padding: '10px 20px',
     backgroundColor: 'blue',
     color: 'white',
