@@ -32,15 +32,15 @@ function App() {
 for (const item of itemsInCart) {
   totalCost += item.price;
 }
-
+  // Calculate quantity of items in cart
 let numberOfItems = 0;
 for (const item of itemsInCart){
   numberOfItems += 1;
 }
 
-  // Placeholder for what happens when user clicks "Proceed to checkout"
+  // Placeholder for what happens when user clicks "Proceed to payment"
   const handleCheckoutClick = () => {
-    // Could link to a payment page or confirmation screen later
+    // Could link to a payment screen or confirmation screen later
    
   };
 
@@ -50,7 +50,7 @@ for (const item of itemsInCart){
       <header />
 
       <div style={styles.layout}>
-        {/* Cart details on the left */}
+        {/* Cart details displayed on  left-hand side */}
         <div style={styles.cartBox}>
           {itemsInCart.map((product) => (
             <div key={product.id} style={styles.cartLine}>
@@ -58,26 +58,26 @@ for (const item of itemsInCart){
               <span>${product.price.toFixed(2)}</span>
             </div>
           ))}
-
+        {/* Total price and quantity details */}
           <div style={styles.totalLine}>
             <strong>Total:</strong> ${totalCost.toFixed(2)}
             <div style={styles.itemCountBox}>{numberOfItems}</div>
           </div>
-
+        
+        {/* Payment button */}
           <button style={styles.checkoutButton} onClick={handleCheckoutClick}>
             Proceed to payment
           </button>
 
         </div>  
 
-        {/* Images of products on the right */}
+        {/* Display of images of all cart items on right-hand side */}
         <div style={styles.imageList}>
           {itemsInCart.map((product) => (
-            <img
-              key={product.id}
-              src={product.image}
-              alt={product.name}
-              style={styles.productImage}
+            <img key={product.id} 
+            src={product.image} 
+            alt={product.name} 
+            style={styles.productImage}
             />
           ))}
         </div>
