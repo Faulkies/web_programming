@@ -1,4 +1,4 @@
-
+//Max and JP
 import { useState } from "react";
 import {
   Box,
@@ -21,44 +21,38 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {Link} from "react-router-dom";
-
-const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+import validator from "validator";
+import { tryAddNewUser, tryLoginUser } from "./CustomerAuth";
 
 function validateLogin(values) {
   const errors = {};
-  if (!values.email?.trim()) errors.email = "Email is required";
-  else if (!EMAIL_RE.test(values.email)) errors.email = "Enter a valid email";
+  if (!values.userName) errors.userName = "userName is required";
   if (!values.password) errors.password = "Password is required";
   return errors;
 }
 
 function validateRegister(values) {
   const errors = {};
-  if (!values.customerName?.trim()) errors.customerName = "Full name is required";
-  if (!values.username?.trim()) errors.username = "Username is required";
-  if (!values.email?.trim()) errors.email = "Email is required";
-  else if (!EMAIL_RE.test(values.email)) errors.email = "Enter a valid email";
+  if (!values.customerName) errors.customerName = "Full name is required";
+  if (!values.userName) errors.userName = "userName is required";
   if (!values.password) errors.password = "Password is required";
-  else if (values.password.length < 6) errors.password = "Min 6 characters";
+  else if (values.password.length < 8) errors.password = "Min 8 characters";
   if (!values.confirm) errors.confirm = "Password is required";
   else if (values.confirm !== values.password) errors.confirm = "Passwords do not match";
   return errors;
 }
 
-const handleForgotPassword = () =>{
-    
-}
+
 
 export default function CustomerLogin({
   onLogin, 
   onRegister, 
   initialValues,
 }) {
-  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [mode, setMode] = useState("login"); 
   const [values, setValues] = useState({
     customerName: "",
-    username: "",
-    email: initialValues?.email ?? "",
+    userName: initialValues?.userName ?? "",
     password: "",
     confirm: "",
   });
@@ -66,6 +60,7 @@ export default function CustomerLogin({
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [userType, setUserType] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,17 +79,21 @@ export default function CustomerLogin({
     try {
       setSubmitting(true);
       if (mode === "login") {
-        if (onLogin) await onLogin({ email: values.email.trim(), password: values.password });
-        else console.log("Login:", { email: values.email.trim() });
+        if (onLogin) await onLogin({ userName: values.userName.trim(), password: values.password });
+        else{
+          tryLoginUser(values.userName, values.password, setUserType)
+          console.log("Login:", { userName: values.userName.trim() })}
       } else {
         const payload = {
           customerName: values.customerName.trim(),
-          username: values.username.trim(),
-          email: values.email.trim(),
+          userName: values.userName.trim(),
           password: values.password,
         };
         if (onRegister) await onRegister(payload);
-        else console.log("Registered:", payload);
+      else {
+        tryAddNewUser(payload, setUserType);
+        console.log("Registered:", payload)
+      };
       }
     } catch (err) {
       setServerError(err?.message || "Something went wrong. Please try again.");
@@ -139,29 +138,18 @@ export default function CustomerLogin({
                 required
               />
 
-              <TextField
-                name="username"
-                label="Username"
-                value={values.username}
-                onChange={handleChange}
-                error={!!errors.username}
-                helperText={errors.username}
-                autoComplete="username"
-                fullWidth
-                required
-              />
             </>
           )}
-          {/* Shared: Email */}
+          {/* Shared: userName */}
           <TextField
-            name="email"
-            type="email"
-            label="Email"
-            value={values.email}
+            name="userName"
+            type="userName"
+            label="userName"
+            value={values.userName}
             onChange={handleChange}
-            error={!!errors.email}
-            helperText={errors.email}
-            autoComplete="email"
+            error={!!errors.userName}
+            helperText={errors.userName}
+            autoComplete="userName"
             fullWidth
             required
           />
@@ -224,7 +212,7 @@ export default function CustomerLogin({
             </>
           )}
 
-          <Button type="submit" variant="contained" size="large" disabled={submitting}>
+          <Button type="submit" onClick={handleSubmit} variant="contained" size="large" disabled={submitting}>
             {submitting ? (
               <Stack direction="row" spacing={1} alignItems="center">
                 <CircularProgress size={20} />

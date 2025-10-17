@@ -1,3 +1,4 @@
+//Max
 import {
 Box,
 Paper,
@@ -18,7 +19,7 @@ const ForgotPassword = () => {
 
 
     return (
-    <h1>f</h1>
+    <h1>Forgot Password</h1>
     );
 }
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import ProductCard from "./ProductCard.js";
+import ProductCard from "./ProductCard";
 import { useState, useEffect } from "react";
 
 const RetrieveProductById = () => {
