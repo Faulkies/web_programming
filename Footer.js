@@ -23,7 +23,7 @@ const Footer = () => {
         borderTop:'1px solid',
         flexWrap:'wrap'
     }
-
+    // styling for copyright text
     const copyStyle  =  {
         width:'100%',
         textAlign:'center',
