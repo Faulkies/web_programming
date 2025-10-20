@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import ProductCard from "../store/product_componets/ProductCard";
+import ProductCard from "../product_componets/ProductCard";
+import { getProducts } from "../../../Database/Helpers/productHelpers";
 
 const toArray = (data) => {
   if (Array.isArray(data)) return data;
@@ -15,20 +16,10 @@ const toArray = (data) => {
 const ProductList = () => {
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/inft3050/Product", {
-        headers: { Accept: "application/json" }
-      })
-      .then((response) => {
-        console.log("Raw response:", response.data);
-        setProducts(toArray(response.data));
-      })
-      .catch((error) => {
-        console.error("Products load failed:", error);
-        setProducts([]); 
-      });
-  }, []);
+  getProducts(setProducts);
+
+  setProducts(toArray(products));
+  console.log(products);  
 
   return (
     <Stack spacing={2} p={4}>

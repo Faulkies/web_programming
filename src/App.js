@@ -2,19 +2,18 @@
 
 import { BrowserRouter as Router, Routes, Link, Route, } from "react-router-dom";
 import './App.css';
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import ProductList from "./pages/admin/ProductList";
+import AdminDashboard from "./pages/store/admin/AdminDashboard";
+import ProductList from "./pages/store/admin/ProductList";
 import Home from "./pages/store/home/Home";
 import ForgotPassword from "./pages/store/auth/ForgotPassword";
-import AddProduct from "./pages/admin/AddProduct";
+import AddProduct from "./pages/store/admin/AddProduct";
 import CustomerLogin from "./pages/store/auth/CustomerLogin";
 import Help from "./pages/store/home/Help";
 import Browse from "./pages/store/home/Browse";
 import Search from "./pages/store/home/Search";
 import Profile from "./pages/store/home/Profile";
 import ProfileOrders from "./pages/store/home/ProfileOrders";
-
-
+import ProductsPage from "./pages/store/admin/ProductsPage";
 function App() {
   return (
     <Router>
@@ -31,6 +30,8 @@ function App() {
           <Route path="/Admin" element={<AdminDashboard />} />
           <Route path="/Admin/ProductList" element={<ProductList />} />
           <Route path="/Admin/AddProduct" element={<AddProduct />} /> 
+          <Route path="/Admin/ProductsPage" element={<ProductsPage />} /> 
+          <Route path="/admin/AddNewProduct" element={<AddProduct />} />
 
 
 
