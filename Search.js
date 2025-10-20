@@ -1,62 +1,84 @@
-// SearchResults.js, used as a search bar for the header on all pages
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+// SearchResults.js
+// ok so this page shows whatever comes up when someone searches from the header lol
+// it’s not perfect yet but it works :)
 
-function SearchResults({ allProducts }) {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const searchTerm = queryParams.get('q') || '';
+import React, { useState }   from   'react'
+import { Link, useLocation } from 'react-router-dom'
 
-  // Filter products based on search term (case-insensitive)
-  const filteredResults = allProducts.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+function SearchResults( { allProducts } ) {
 
-  // Local state for sorting or future features
-  const [sortOption, setSortOption] = useState('default');
+    const location = useLocation()
+    const query = new URLSearchParams(location.search)
+    const searchWord = query.get('q') || ''   // what they typed in search bar
 
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
-  };
+    // just filtering stuff, nothing too fancy rn
+    const searchMatches = allProducts.filter(item => {
+        if(!item?.name) return false
+        return item.name.toLowerCase().includes(searchWord.toLowerCase())
+    })
 
-  // TODO: Sorting
-  const sortedResults = [...filteredResults].sort((a, b) => {
-    if (sortOption === 'price-low-high') return a.price - b.price;
-    if (sortOption === 'price-high-low') return b.price - a.price;
-    return 0;
-  });
+    // might use later for sorting stuff
+    const [ sortByChoice , setSortByChoice ] = useState('default')
 
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>Search Results for: "{searchTerm}"</h2>
+    const handleSortChange = (e) => {
+        setSortByChoice(e.target.value)
+        // console.log("sorting by -> ", e.target.value) // keeping this in case I break it later lol
+    }
 
-      {/* If no results found */}
-      {sortedResults.length === 0 ? (
-        <p>No matches found. Try using a different keyword.</p>
-      ) : (
-        <>
-          
+    // kinda sloppy sorting but it works
+    const sortedStuff = [...searchMatches].sort((a,b)=>{
+        if(sortByChoice === 'price-low-high') return a.price - b.price
+        if(sortByChoice === 'price-high-low') return b.price - a.price
+        return 0
+    })
 
-          {/* List of search results */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {sortedResults.map((product) => (
-              <div key={product.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', boxShadow: '0 0 5px rgba(0,0,0,0.1)', borderRadius: '5px' }}>
-                <div>
-                  <h3 style={{ margin: 0 }}>{product.name}</h3>
-                  <p style={{ margin: '5px 0' }}>${product.price.toFixed(2)}</p>
-                </div>
-                <img src={product.image}, alt={product.name}, style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }}/>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+    return (
+        <div style={{ padding:'20px' }}>
+            <h2>Results for: "{ searchWord }"</h2>
 
-      <div style={{ marginTop: '20px' }}>
-        <Link to="/">Back to Home</Link>
-      </div>
-    </div>
-  );
+            {sortedStuff.length === 0 ? (
+                <p>hmm… nothing came up. maybe try another word?</p>
+            ) : (
+                <>
+                    {/* show each product */}
+                    <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
+                        {sortedStuff.map(product => (
+                            <div 
+                              key={product.id}
+                              style={{
+                                  display:'flex',
+                                  justifyContent:'space-between',
+                                  padding:'10px',
+                                  boxShadow:'0 0 4px rgba(0,0,0,0.1)',
+                                  borderRadius:'6px'
+                              }}
+                            >
+                                <div>
+                                    <h3 style={{ margin:0 }}>{ product.name }</h3>
+                                    <p style={{ margin:'5px 0' }}>${product.price?.toFixed(2)}</p>
+                                </div>
+
+                                <img 
+                                  src={product.image}
+                                  alt={product.name}
+                                  style={{
+                                      width:'60px',
+                                      height:'60px',
+                                      objectFit:'cover',
+                                      borderRadius:'5px'
+                                  }}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
+
+            <div style={{ marginTop:'20px' }}>
+                <Link to="/">← go back home</Link>
+            </div>
+        </div>
+    )
 }
 
-export default SearchResults;
+export default SearchResults
