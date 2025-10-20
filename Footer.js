@@ -6,14 +6,12 @@ import React from 'react'
 
 const Footer = () => {
 
-    const yearNow  =  new Date().getFullYear()  // current year for copyright
+    const yearNow = new Date().getFullYear()  // current year for copyright
 
     // styling for individual links
     const linkStyle  =  {
         marginRight:'12px',
-        color:'#555',
         textDecoration:'none',
-        fontSize:'0.9rem'
     }
 
     // container styling
@@ -22,8 +20,7 @@ const Footer = () => {
         justifyContent:'center',
         alignItems:'center',
         padding:'18px 10px',
-        backgroundColor:'#f7f7f7',
-        borderTop:'1px solid #ddd',
+        borderTop:'1px solid',
         flexWrap:'wrap'
     }
 
@@ -31,7 +28,6 @@ const Footer = () => {
         width:'100%',
         textAlign:'center',
         marginTop:'10px',
-        color:'#888',
         fontSize:'0.85rem'
     }
 
