@@ -1,20 +1,29 @@
-//Kien and Max
-
+// Kien and Max
 import { useState } from 'react';
 import {
   AppBar, Toolbar, Container, Typography, Button, IconButton,
-  Menu, MenuItem, TextField, InputAdornment, Stack, Box,
+  Menu, MenuItem, TextField, Stack, Box,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "../auth/SessionSlice";
 
 export default function Header({ query, onQuery }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuOpen = Boolean(anchorEl);
+  const dispatch = useDispatch();
+  const { loggedIn } = useSelector((state) => state.session);
 
   const handleMenuClick = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
+
+  const handleLogout = async () => {
+      dispatch(logout());
+      handleMenuClose();
+  };
 
   return (
     <AppBar
@@ -39,7 +48,7 @@ export default function Header({ query, onQuery }) {
             <Typography
               variant="h6"
               component="div"
-              sx={{ fontWeight: 700}}
+              sx={{ fontWeight: 700 }}
             >
               Entertainment Guild
             </Typography>
@@ -47,19 +56,20 @@ export default function Header({ query, onQuery }) {
             {/* Primary nav */}
             <Box component="nav" aria-label="Primary">
               <Stack direction="row" spacing={1}>
-                <Button color="inherit" component={Link} to="/Browse" underline="none">
+                <Button color="inherit" component={Link} to="/Browse">
                   Browse
                 </Button>
-                <Button color="inherit" component={Link} to="/Search" underline="none">
+                <Button color="inherit" component={Link} to="/Search">
                   Search
                 </Button>
-                <Button color="inherit" component={Link} to="/Help" underline="none">
+                <Button color="inherit" component={Link} to="/Help">
                   Help
                 </Button>
               </Stack>
             </Box>
 
             <Box sx={{ flexGrow: 1 }} />
+
             {/* Search bar */}
             <TextField
               size="small"
@@ -68,7 +78,11 @@ export default function Header({ query, onQuery }) {
               value={query}
               onChange={(e) => onQuery(e.target.value)}
               sx={{ width: { xs: 200, sm: 280, md: 360 } }}
-              
+              InputProps={{
+                endAdornment: (
+                  <SearchIcon color="action" />
+                ),
+              }}
             />
 
             {/* Profile/menu */}
@@ -93,15 +107,27 @@ export default function Header({ query, onQuery }) {
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-              <MenuItem component={Link} to="/Login" onClick={handleMenuClose}>
-                Login
-              </MenuItem>
-              <MenuItem component={Link} to="/Profile" onClick={handleMenuClose}>
-                Profile
-              </MenuItem>
-              <MenuItem component={Link} to="/Profile/Orders" onClick={handleMenuClose}>
-                Orders
-              </MenuItem>
+              {/* Only show Login if not logged in */}
+              {!loggedIn && (
+                <MenuItem component={Link} to="/Login" onClick={handleMenuClose}>
+                  Login
+                </MenuItem>
+              )}
+
+              {/* Only show Profile + Orders if logged in */}
+              {loggedIn && (
+                <>
+                  <MenuItem component={Link} to="/Profile" onClick={handleMenuClose}>
+                    Profile
+                  </MenuItem>
+                  <MenuItem component={Link} to="/Profile/Orders" onClick={handleMenuClose}>
+                    Orders
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    Logout
+                  </MenuItem>
+                </>
+              )}
             </Menu>
           </Stack>
         </Toolbar>

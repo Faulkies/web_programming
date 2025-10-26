@@ -6,7 +6,7 @@ const getProducts = (setProducts) => {
         'Accept': 'application/json',
     };
 
-    axios.get(API_PREFIX + "/Product", {
+    axios.get(API_PREFIX + "/Product?limit=1000", {
         headers: headers
     }).then((response) => {
         setProducts(response.data);

@@ -11,7 +11,7 @@ const AdminDashboard = () => {
 
         <Stack direction="row" spacing={2}>  
 
-            <Link to="/Admin/ProductList">
+            <Link to="/Admin/ProductsPage">
                 <Button variant="contained"  >
                     Manage Products
                 </Button> 

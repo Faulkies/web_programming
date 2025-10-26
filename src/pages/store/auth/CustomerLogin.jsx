@@ -1,27 +1,16 @@
 // Max and JP
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { login, logout } from "./SessionSlice";
 import {
-  Box,
-  Button,
-  Paper,
-  TextField,
-  Typography,
-  Stack,
-  Avatar,
-  Alert,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  IconButton,
-  Divider
+  Box, Button, Paper, TextField, Typography, Stack, Avatar,
+  Alert, CircularProgress, FormControl, InputLabel, OutlinedInput,
+  InputAdornment, IconButton, Divider
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { tryAddNewUser, TryLoginUser } from "../../../Database/Helpers/userHelpers";
 
 function validateLogin(values) {
@@ -42,11 +31,10 @@ function validateRegister(values) {
   return errors;
 }
 
-export default function CustomerLogin({
-  onLogin,
-  onRegister,
-  initialValues,
-}) {
+export default function CustomerLogin({ onLogin, onRegister, initialValues }) {
+  const dispatch = useDispatch();                
+  const navigate = useNavigate();                   
+
   const [mode, setMode] = useState("login");
   const [values, setValues] = useState({
     customerName: "",
@@ -57,37 +45,68 @@ export default function CustomerLogin({
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState("");
-  const Navigate = useNavigate();
-  // React to backend indicating invalid login
-  useEffect(() => {
-    if (mode === "login" && userType === "Invalid") {
-      setSubmitting(false);
-      setServerError("Login failed. Please check your username or password.");
-    }
-    else if (mode === "login" && userType === "Patron") { 
-      onLogin?.();
-      Navigate("/", { replace: true });
-    }
-  }, [userType, mode]);
 
-  // Clear banner when switching modes
+  const [user, setUser] = useState({ type: "", id: null });
+
+  const [registrationResult, setRegistrationResult] = useState("");
+
+
+
+  const setSession = (role, id) => {
+    // correct field names for your slice
+    dispatch(login({ userType: role, userId: id }));
+  };
+
+  // Handle login results
+  useEffect(() => {
+    if (mode !== "login") return;
+
+    if (user.type === "Invalid") {
+      setSubmitting(false);
+      dispatch(logout());           
+      setServerError("Login failed. Please check your username or password.");
+      return;
+    }
+
+    if (user.type === "Patron") {
+      onLogin?.();
+      setSession(user.type, user.id);
+      setTimeout(() => navigate("/", { replace: true }), 0);
+      return;
+    }
+
+    if (user.type === "User") {                        
+      onLogin?.();
+                // "Admin"
+      setSession(user.type, user.id);
+      setTimeout(() => navigate("/Admin", { replace: true }), 0);
+      return;
+    }
+  }, [user, mode, onLogin, navigate, dispatch]);
+
   useEffect(() => {
     setServerError("");
+    setSuccessMessage("");
     setErrors({});
+    setRegistrationResult("");
+    setUser({ type: "", id: null });                   // ✅ keep shape consistent
   }, [mode]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues((v) => ({ ...v, [name]: value }));
     if (errors[name]) setErrors((er) => ({ ...er, [name]: undefined }));
-    if (serverError) setServerError(""); // clear banner as user edits
+    if (serverError) setServerError("");
+    if (successMessage) setSuccessMessage("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError("");
+    setSuccessMessage("");
+    setRegistrationResult("");
 
     const nextErrors = mode === "login" ? validateLogin(values) : validateRegister(values);
     setErrors(nextErrors);
@@ -96,8 +115,7 @@ export default function CustomerLogin({
     try {
       setSubmitting(true);
       if (mode === "login") {
-          TryLoginUser(values.userName, values.password, setUserType);
-
+        await TryLoginUser(values.userName, values.password, setUser);
       } else {
         const payload = {
           customerName: values.customerName,
@@ -107,18 +125,14 @@ export default function CustomerLogin({
         if (onRegister) {
           await onRegister(payload);
         } else {
-          tryAddNewUser(payload, setUserType);
+          await tryAddNewUser(payload, setRegistrationResult);
         }
       }
     } catch (err) {
       setServerError(err?.message || "Something went wrong. Please try again.");
-    } finally {
       setSubmitting(false);
     }
   };
-
-  const handleClickShowPassword = () => setShowPassword((s) => !s);
-  const handleMouseDownPassword = (e) => e.preventDefault();
 
   const isLogin = mode === "login";
   const title = isLogin ? "Login" : "Create account";
@@ -134,30 +148,23 @@ export default function CustomerLogin({
             <Typography variant="h5" fontWeight={700}>{title}</Typography>
           </Stack>
 
-          {serverError ? (
-            <Alert severity="error" role="alert" aria-live="assertive">
-              {serverError}
-            </Alert>
-          ) : null}
+          {successMessage && <Alert severity="success">{successMessage}</Alert>}
+          {serverError && <Alert severity="error">{serverError}</Alert>}
 
-          {/* Register-only fields */}
           {!isLogin && (
-            <>
-              <TextField
-                name="customerName"
-                label="Full name"
-                value={values.customerName}
-                onChange={handleChange}
-                error={!!errors.customerName}
-                helperText={errors.customerName}
-                autoComplete="name"
-                fullWidth
-                required
-              />
-            </>
+            <TextField
+              name="customerName"
+              label="Full name"
+              value={values.customerName}
+              onChange={handleChange}
+              error={!!errors.customerName}
+              helperText={errors.customerName}
+              autoComplete="name"
+              fullWidth
+              required
+            />
           )}
-          
-          {/* Username */}
+
           <TextField
             name="userName"
             type="text"
@@ -171,8 +178,6 @@ export default function CustomerLogin({
             required
           />
 
-
-          {/* Password */}
           <FormControl variant="outlined" fullWidth required error={!!errors.password}>
             <InputLabel htmlFor="password">Password</InputLabel>
             <OutlinedInput
@@ -186,8 +191,7 @@ export default function CustomerLogin({
                 <InputAdornment position="end">
                   <IconButton
                     aria-label={showPassword ? "Hide password" : "Show password"}
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
+                    onClick={() => setShowPassword((s) => !s)}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -197,19 +201,17 @@ export default function CustomerLogin({
               label="Password"
             />
             {errors.password && (
-              <Typography variant="caption" color="error">
+              <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
                 {errors.password}
               </Typography>
             )}
-            {/* Extra hint when backend says invalid */}
-            {isLogin && userType === "Invalid" && !errors.password && (
-              <Typography variant="caption" color="error">
+            {isLogin && user.type === "Invalid" && !errors.password && (
+              <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
                 Incorrect username or password.
               </Typography>
             )}
           </FormControl>
 
-          {/* Confirm password (register only) */}
           {!isLogin && (
             <FormControl variant="outlined" fullWidth required error={!!errors.confirm}>
               <InputLabel htmlFor="confirm">Confirm Password</InputLabel>
@@ -224,8 +226,7 @@ export default function CustomerLogin({
                   <InputAdornment position="end">
                     <IconButton
                       aria-label={showPassword ? "Hide password" : "Show password"}
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
+                      onClick={() => setShowPassword((s) => !s)}
                       edge="end"
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -235,19 +236,18 @@ export default function CustomerLogin({
                 label="Confirm Password"
               />
               {errors.confirm && (
-                <Typography variant="caption" color="error">
+                <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
                   {errors.confirm}
                 </Typography>
               )}
             </FormControl>
           )}
 
-          {/* Submit */}
           <Button type="submit" variant="contained" size="large" disabled={submitting}>
             {submitting ? (
               <Stack direction="row" spacing={1} alignItems="center">
                 <CircularProgress size={20} />
-                <span>{isLogin ? "Signing in…" : "Creating…"}</span>
+                <span>{isLogin ? "Signing in..." : "Creating..."}</span>
               </Stack>
             ) : (
               isLogin ? "Login" : "Create account"
@@ -257,23 +257,17 @@ export default function CustomerLogin({
           {isLogin && (
             <>
               <Link to="/ForgotPassword">
-                <Button type="button" size="small">
-                  Forgot Password?
-                </Button>
+                <Button type="button" size="small">Forgot Password?</Button>
               </Link>
               <Divider sx={{ my: 2 }} />
             </>
           )}
 
-          <Button
-            type="button"
-            size="small"
-            onClick={() => setMode(isLogin ? "register" : "login")}
-          >
+          <Button type="button" size="small" onClick={() => setMode(isLogin ? "register" : "login")}>
             {isLogin ? "Create an account" : "I already have an account"}
           </Button>
         </Stack>
       </Paper>
     </Box>
   );
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+}

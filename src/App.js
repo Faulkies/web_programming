@@ -1,9 +1,9 @@
 //Max
 
 import { BrowserRouter as Router, Routes, Link, Route, } from "react-router-dom";
+import { configureStore } from "@reduxjs/toolkit";
 import './App.css';
 import AdminDashboard from "./pages/store/admin/AdminDashboard";
-import ProductList from "./pages/store/admin/ProductList";
 import Home from "./pages/store/home/Home";
 import ForgotPassword from "./pages/store/auth/ForgotPassword";
 import AddProduct from "./pages/store/admin/AddProduct";
@@ -14,6 +14,7 @@ import Search from "./pages/store/home/Search";
 import Profile from "./pages/store/home/Profile";
 import ProfileOrders from "./pages/store/home/ProfileOrders";
 import ProductsPage from "./pages/store/admin/ProductsPage";
+import ProtectedRoute from "./pages/store/auth/ProtectedRoute";
 function App() {
   return (
     <Router>
@@ -27,11 +28,10 @@ function App() {
           <Route path="/Profile/Orders" element={<ProfileOrders />} />
 
           {/* ADMIN */}
-          <Route path="/Admin" element={<AdminDashboard />} />
-          <Route path="/Admin/ProductList" element={<ProductList />} />
-          <Route path="/Admin/AddProduct" element={<AddProduct />} /> 
-          <Route path="/Admin/ProductsPage" element={<ProductsPage />} /> 
-          <Route path="/admin/AddNewProduct" element={<AddProduct />} />
+          <Route path="/Admin" element={<ProtectedRoute requiredRole="User"><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/Admin/AddProduct" element={<ProtectedRoute requiredRole="User"><AddProduct /></ProtectedRoute>} />
+          <Route path="/Admin/ProductsPage" element={<ProtectedRoute requiredRole="User"><ProductsPage /></ProtectedRoute>} />
+          <Route path="/admin/AddNewProduct" element={<ProtectedRoute requiredRole="User"><AddProduct /></ProtectedRoute>} />
 
 
 

@@ -1,40 +1,38 @@
 import axios from 'axios';
-//API endpoints
+import { getGenreById } from './GetGenreById';
+import { getSubGenreByName } from './getSubGenreByName';
+
+
+
 const API_PREFIX = "/api/inft3050";
 
-const getSubGenreById = (id, subGenreId) => {
-    const headers = {
-        'Accept': 'application/json',
-    };
+let bookGenre = {};
+let movieGenre = {};  
+let gameGenre = {};
 
-    if (id <= 199) {
-        axios.get(API_PREFIX + "/BookGenre/" + subGenreId,{
-            headers: headers,
-            }).then((response) => { //Suc
-                return(response.data);
-            }).catch((error) => {
-                return(error);
-            });
-        } 
-    else if (id >= 200 && id <= 299) {
-        axios.get(API_PREFIX + "/MovieGenre/" + subGenreId,{
-            headers: headers,
-            }).then((response) => { //Success
-                console.log(response.data.Name);
-                return(response.data.Name);
-            }).catch((error) => {
-                return(error);
-            });
-        }
-    else if (id >= 300 && id <= 399) {
-        axios.get(API_PREFIX + "/GameGenre/" + subGenreId,{
-            headers: headers,
-            }).then((response) => { //Success
-                console.log(response.data.Name);
-                return(response.data.Name);
-            }).catch((error) => {
-                return(error);
-            });
-        }
-}
+bookGenre = getSubGenreByName("Books");
+movieGenre = getSubGenreByName("Movies");
+gameGenre = getSubGenreByName("Games");
+
+console.log("bookGenre:", bookGenre);
+console.log("movieGenre:", movieGenre);
+console.log("gameGenre:", gameGenre);
+
+
+getGenreById(1);
+
+
+// Async version - returns a Promise
+const getSubGenreById = async (id) => {
+    if (id in bookGenre) {
+        return bookGenre[id];
+    } else if (id in movieGenre) {  
+        return movieGenre[id];
+    } else if (id in gameGenre) {
+        return gameGenre[id];
+    } else {
+        return "Unknown";
+    }
+};
+
 export { getSubGenreById };

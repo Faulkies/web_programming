@@ -5,12 +5,23 @@ export const api = axios.create({
   headers: {
     'Accept': 'application/json',
     'xc-auth': 'sPi8tSXBw3BgursDPmfAJz8B3mPaHA6FQ9PWZYJZ',
-    
   },
   withCredentials: true,
 });
 
+export const authApi = axios.create({
+  baseURL: "/",
+  headers: {
+    'Accept': 'application/json',
+    'xc-auth': 'sPi8tSXBw3BgursDPmfAJz8B3mPaHA6FQ9PWZYJZ',
+  },
+  withCredentials: true,
+});
 
 export async function adminLogin() {
-  await api.post("/login", {"username":"adminAccount","password":"adminPW"} )
+  const response = await authApi.post("/login", {
+    username: "adminAccount",
+    password: "adminPW"
+  });
+  return response.data;
 }
