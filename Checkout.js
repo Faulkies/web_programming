@@ -87,56 +87,89 @@ for (const item of itemsInCart){
 }
 
 // Style definitions
+// Style definitions
 const styles = {
   page: {
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: 'white',
-    minHeight: '100',
+    fontFamily: 'system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+    backgroundColor: '#eef5ff', // matches --bg
+    color: '#0f172a', // matches --text
+    minHeight: '100vh',
+    padding: '18px',
   },
   layout: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'flex-start',
-    gap: 40,
-    marginTop: 20,
+    gap: '40px',
+    marginTop: '28px',
+    flexWrap: 'wrap',
   },
   cartBox: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 8,
+    backgroundColor: '#fff', // matches --panel
+    padding: '20px',
+    borderRadius: '14px', // matches --radius
     maxWidth: 400,
-    boxShadow: '0 0 5px black',
+    boxShadow: '0 10px 24px rgba(15,23,42,.08)', // matches --shadow
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
   },
   cartLine: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: 10,
-    borderBottom: '1px solid white',
+    marginBottom: '10px',
+    paddingBottom: '6px',
+    borderBottom: '1px solid rgba(15,23,42,0.08)',
+    fontSize: '15px',
+    fontWeight: '500',
   },
   totalLine: {
-    fontWeight: 'bold',
+    fontWeight: '700',
+    fontSize: '16px',
+    marginTop: '12px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  itemCountBox: {
+    backgroundColor: '#2563eb', // matches --primary
+    color: '#fff',
+    borderRadius: '999px',
+    padding: '2px 8px',
+    fontSize: '13px',
+    fontWeight: '600',
   },
   checkoutButton: {
-    padding: '10px 20px',
-    backgroundColor: 'blue',
-    color: 'white',
-    borderRadius: 5,
+    marginTop: '16px',
+    padding: '10px 16px',
+    backgroundColor: '#2563eb', // --primary
+    color: '#fff',
+    borderRadius: '999px',
+    border: 'none',
     cursor: 'pointer',
+    fontWeight: '600',
+    transition: 'background 0.2s',
+  },
+  checkoutButtonHover: {
+    backgroundColor: '#1d4ed8', // darker primary
   },
   imageList: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 10,
+    gap: '14px',
+    flex: 1,
+    minWidth: '120px',
   },
   productImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    boxShadow: '0 0 5px grey',
+    width: '100%',
+    maxWidth: '260px',
+    height: '260px',
+    borderRadius: '14px',
+    objectFit: 'cover',
+    boxShadow: '0 10px 24px rgba(15,23,42,.08)',
   },
-  
-
 };
+
 
 export default App;
