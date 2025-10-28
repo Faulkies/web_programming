@@ -12,7 +12,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Link, useNavigate } from "react-router-dom";
 import { tryAddNewUser, TryLoginUser } from "../../../Database/Helpers/userHelpers";
-
+import validator from "validator";
 function validateLogin(values) {
   const errors = {};
   if (!values.userName) errors.userName = "Username is required";
@@ -24,6 +24,7 @@ function validateRegister(values) {
   const errors = {};
   if (!values.customerName) errors.customerName = "Full name is required";
   if (!values.userName) errors.userName = "Email is required";
+  if (!validator.isEmail(values.userName)) errors.userName = "Invalid email address";
   if (!values.password) errors.password = "Password is required";
   else if (values.password.length < 8) errors.password = "Min 8 characters";
   if (!values.confirm) errors.confirm = "Password is required";
@@ -48,7 +49,7 @@ export default function CustomerLogin({ onLogin, onRegister, initialValues }) {
   const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [user, setUser] = useState({ type: "", id: null });
+  const [user, setUser] = useState({ type: "", id: null, userName: null, });
 
   const [registrationResult, setRegistrationResult] = useState("");
 
@@ -72,7 +73,7 @@ export default function CustomerLogin({ onLogin, onRegister, initialValues }) {
 
     if (user.type === "Patron") {
       onLogin?.();
-      setSession(user.type, user.id);
+      setSession(user.type, user.id, user.userName);
       setTimeout(() => navigate("/", { replace: true }), 0);
       return;
     }

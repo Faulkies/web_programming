@@ -13,24 +13,36 @@ import Browse from "./pages/store/home/Browse";
 import Search from "./pages/store/home/Search";
 import Profile from "./pages/store/home/Profile";
 import ProfileOrders from "./pages/store/home/ProfileOrders";
-import ProductsPage from "./pages/store/admin/ProductsPage";
+import ProductsPage from "./pages/store/admin/AdminProductsPage";
 import ProtectedRoute from "./pages/store/auth/ProtectedRoute";
+import EditProduct from "./pages/store/admin/EditProduct";
+import ProductPage from "./pages/store/home/ProductPage";
+import Checkout from "./pages/store/cart/CheckOut";
+import { CartProvider } from "./pages/store/cart/CartProvider";
+import Cart from "./pages/store/cart/Cart";
+
 function App() {
   return (
     <Router>
+      <CartProvider>
+      <Cart />
       <Routes>
           {/* HOME */}
+          
           <Route path="/" element={<Home />} />
+          <Route path="/ProductPage/:id" element={<ProductPage />} />
           <Route path="/Help" element={<Help />} />
           <Route path="/Browse" element={<Browse />} />
           <Route path="/Search" element={<Search />} />
           <Route path="/Profile" element={<Profile />} />
+          <Route path="/Checkout" element={<Checkout />} />
           <Route path="/Profile/Orders" element={<ProfileOrders />} />
-
+        
           {/* ADMIN */}
           <Route path="/Admin" element={<ProtectedRoute requiredRole="User"><AdminDashboard /></ProtectedRoute>} />
           <Route path="/Admin/AddProduct" element={<ProtectedRoute requiredRole="User"><AddProduct /></ProtectedRoute>} />
           <Route path="/Admin/ProductsPage" element={<ProtectedRoute requiredRole="User"><ProductsPage /></ProtectedRoute>} />
+          <Route path="/Admin/EditProduct/:id" element={<ProtectedRoute requiredRole="User"><EditProduct /></ProtectedRoute>} />
           <Route path="/admin/AddNewProduct" element={<ProtectedRoute requiredRole="User"><AddProduct /></ProtectedRoute>} />
 
 
@@ -39,9 +51,10 @@ function App() {
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/Login" element={<CustomerLogin />} />
 
-          
+
         </Routes>
-      </Router>
+      </CartProvider>
+    </Router>
   );
 }
 

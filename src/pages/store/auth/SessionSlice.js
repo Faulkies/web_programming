@@ -17,12 +17,13 @@ const saveSession = (state) => {
   } catch {}
 };
 
-// --- slice ---
+
 const initialState =
   loadSession() || {
     loggedIn: false,
     userType: null,
     userId: null,
+    userName: null,
   };
 
 const sessionSlice = createSlice({
@@ -33,13 +34,15 @@ const sessionSlice = createSlice({
       state.loggedIn = true;
       state.userType = action.payload.userType;
       state.userId = action.payload.userId;
-      saveSession(state);          // ✅ persist on login
+      state.userName = action.payload.userName;
+      saveSession(state);          
     },
     logout: (state) => {
       state.loggedIn = false;
       state.userType = null;
       state.userId = null;
-      localStorage.removeItem("session"); // ✅ clear on logout
+      state.userName = null;
+      localStorage.removeItem("session");
     },
   },
 });

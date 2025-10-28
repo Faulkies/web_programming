@@ -55,7 +55,7 @@ const TryLoginUser = async (username, password, setUser) => {
                 const ok = safeEquals(computed, String(patron.HashPW || ""));
                 
                 if (ok) {
-                    setUser({ type: "Patron", id: patron.PatronID });
+                    setUser({ type: "Patron", id: patron.PatronID, userName: username,});
                 } else {
                     setUser({ type: "Invalid" });
                 }
@@ -80,7 +80,7 @@ const TryLoginUser = async (username, password, setUser) => {
                 const ok = safeEquals(computed, String(user.HashPW || ""));
                 
                 if (ok) {
-                    setUser({ type: "User", id: user.UserID, isAdmin: user.IsAdmin });
+                    setUser({ type: "User", id: user.UserID, isAdmin: user.IsAdmin, userName: username, });
                 } else {
                     setUser({ type: "Invalid" });
                 }

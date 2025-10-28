@@ -1,5 +1,7 @@
 // Kien and Max
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import BackButton from './BackButton';
 import {
   AppBar, Toolbar, Container, Typography, Button, IconButton,
   Menu, MenuItem, TextField, Stack, Box,
@@ -7,9 +9,9 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../auth/SessionSlice";
+import CartButton from '../cart/CartButton';
 
 export default function Header({ query, onQuery }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -19,12 +21,13 @@ export default function Header({ query, onQuery }) {
 
   const handleMenuClick = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-
   const handleLogout = async () => {
-      dispatch(logout());
-      handleMenuClose();
+    dispatch(logout());
+    handleMenuClose();
   };
-
+  const location = useLocation();
+  const showBackButton = location.pathname !== "/";
+  console.log(showBackButton);
   return (
     <AppBar
       position="sticky"
@@ -36,8 +39,25 @@ export default function Header({ query, onQuery }) {
         bgcolor: 'background.paper',
       }}
     >
-      <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ minHeight: 72 }}>
+      <Toolbar disableGutters sx={{ minHeight: 72, position: 'relative' }}>
+        {/* Back button pinned absolutely to the far left */}
+        {showBackButton && (
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 8,
+              top: '50%',
+              transform: 'translateY(-50%)',
+            }}
+          >
+            <BackButton fallback="/" />
+          </Box>
+        )}
+
+
+
+        {/* Everything else stays centered in the container */}
+        <Container maxWidth="lg">
           <Stack
             direction="row"
             alignItems="center"
@@ -53,10 +73,10 @@ export default function Header({ query, onQuery }) {
               Entertainment Guild
             </Typography>
 
-            {/* Primary nav */}
+            {/* Primary navigation */}
             <Box component="nav" aria-label="Primary">
               <Stack direction="row" spacing={1}>
-                <Button color="inherit" component={Link} to="/Browse">
+                <Button color="inherit" component={Link} to="/">
                   Browse
                 </Button>
                 <Button color="inherit" component={Link} to="/Search">
@@ -85,7 +105,10 @@ export default function Header({ query, onQuery }) {
               }}
             />
 
-            {/* Profile/menu */}
+            {/* Cart */}
+            <CartButton />
+
+            {/* Profile / user menu */}
             <IconButton
               edge="end"
               aria-label="Open profile"
@@ -130,8 +153,8 @@ export default function Header({ query, onQuery }) {
               )}
             </Menu>
           </Stack>
-        </Toolbar>
-      </Container>
+        </Container>
+      </Toolbar>
     </AppBar>
   );
 }

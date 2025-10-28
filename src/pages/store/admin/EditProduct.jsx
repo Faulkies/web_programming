@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
 import { getGenre } from "../../../Database/Helpers/getGenre";
 import { adminLogin } from "../../../Database/apiClient";
 import { api } from "../../../Database/apiClient";
-import BackButton from "../../store/common/BackButton";
 import { getSubGenres } from "../../../Database/Helpers/getSubGenres";
 import {
   Button,
@@ -24,9 +22,11 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
-const AddProduct = () => {
+const EditProduct = () => {
+  // Extract productId from URL parameters
+  const { id: productId } = useParams();
   const navigate = useNavigate();
-  const { userName } = useSelector((state) => state.session);
+
   const [form, setForm] = useState({
     name: "",
     author: "",
@@ -38,10 +38,33 @@ const AddProduct = () => {
   
   const [genreMap, setGenreMap] = useState({});
   const [subGenreMaps, setSubGenreMaps] = useState({ books: {}, movies: {}, games: {} });
-  
+  const { userName } = useSelector((state) => state.session);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+
+  // Helper function - same as ProductsPage
+  const getGenreFromProductId = (id) => {
+    return genreMap[id] || "Unknown";
+  };
+
+  // Helper function - same as ProductsPage
+  const getSubGenreFromProductId = (id, subGenreId) => {
+    if (!subGenreId) return "";
+    
+    const genre = getGenreFromProductId(id);
+    
+    // Use the appropriate subgenre map based on genre
+    if (genre === "Books") {
+      return subGenreMaps.books[subGenreId] || "";
+    } else if (genre === "Movies") {
+      return subGenreMaps.movies[subGenreId] || "";
+    } else if (genre === "Games") {
+      return subGenreMaps.games[subGenreId] || "";
+    }
+    
+    return "";
+  };
 
   // Get available subgenres for dropdown based on selected type
   const getAvailableSubGenres = () => {
@@ -68,9 +91,15 @@ const AddProduct = () => {
     }));
   };
 
-  // Load genres and subgenres on component mount
+  // Fetch product data on component mount
   useEffect(() => {
-    const fetchData = async () => {
+    if (!productId) {
+      setError("No product ID provided");
+      setLoading(false);
+      return;
+    }
+
+    const fetchProduct = async () => {
       try {
         setLoading(true);
         
@@ -90,16 +119,56 @@ const AddProduct = () => {
         const subGenres = await getSubGenres();
         setSubGenreMaps(subGenres);
         
+        // Fetch product data
+        const response = await api.get(
+          `/Product/${productId}`
+        );
+          
+   
+        
+        const product = response.data;
+        console.log("Fetched product:", product);
+        
+        // Determine genre type from mapping
+        const productGenre = mapping[productId] || "Books";
+        
+        // Map genre name to type number
+        let typeNumber = "1";
+        switch (productGenre) {
+          case "Books":
+            typeNumber = "1";
+            break;
+          case "Movies":
+            typeNumber = "2";
+            break;
+          case "Games":
+            typeNumber = "3";
+            break;
+          default:
+            typeNumber = "1";
+        }
+        
+        // Set form with all data at once
+        setForm({
+          name: product.Name || "",
+          author: product.Author || "",
+          type: typeNumber,
+          subGenre: product.SubGenre?.toString() || "",
+          description: product.Description || "",
+          published: product.Published ? product.Published.split('T')[0] : "",
+
+        });
+        
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Failed to load form data");
+        console.error("Error fetching product:", err);
+        setError("Failed to load product data");
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchProduct();
+  }, [productId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -121,47 +190,77 @@ const AddProduct = () => {
       setError(null);
       
       // Prepare data with correct capitalized field names for API
-      const newProductData = {
+      const updateData = {
         Name: form.name,
         Author: form.author,
         Description: form.description,
         SubGenre: form.subGenre ? parseInt(form.subGenre) : null,
         Published: form.published,
-        Genre: parseInt(form.type),
-        LastUpdated: new Date(),
-        LastUpdatedBy: userName,
-
-        
       };
       
-      console.log("Creating product with data:", newProductData);
+      console.log("Updating product with data:", updateData);
       
-      // Send POST request to create the product
+      // Send PATCH request to update the product
       await adminLogin();
       
-      await api.post(
-        `/Product`,
-        newProductData
+      await api.patch(
+        `/Product/${productId}`,
+        updateData,
+        
+        
       );
       
       setSuccess(true);
-      alert("Product added successfully!");
-      
-      // Reset form
-      setForm({
-        name: "",
-        author: "",
-        type: "1",
-        subGenre: "",
-        description: "",
-        published: "",
-      });
-      
-      // Optional: Navigate to products page
+      alert("Product updated successfully!");
       navigate("/Admin/ProductsPage");
     } catch (err) {
-      console.error("Error creating product:", err);
-      setError("Failed to add product. Please try again.");
+      console.error("Error updating product:", err);
+      setError("Failed to update product. Please try again.");
+    }
+  };
+
+  const handleDelete = async () => {
+    // Confirm deletion
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${form.name}"? This will also delete all related stock records. This action cannot be undone.`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      setError(null);
+      setLoading(true);
+      
+      await adminLogin();
+      
+      // First, fetch and delete all related stocktake records
+      try {
+        const stocktakeResponse = await api.get(`/Stocktake?where=(ProductId,eq,${productId})`);
+        const stocktakeRecords = Array.isArray(stocktakeResponse.data) 
+          ? stocktakeResponse.data 
+          : stocktakeResponse.data?.list || [];
+        
+        // Delete each stocktake record
+        for (const record of stocktakeRecords) {
+          await api.delete(`/Stocktake/${record.ItemId}`);
+        }
+      } catch (stockErr) {
+        console.log("No stocktake records found or already deleted:", stockErr);
+      }
+      
+      // Then delete the product
+      await api.delete(`/Product/${productId}`);
+      
+      setLoading(false);
+      alert("Product deleted successfully!");
+      navigate("/Admin/ProductsPage"); // Navigate to products list
+    } catch (err) {
+      console.error("Error deleting product:", err);
+      setLoading(false);
+      
+      // Show more detailed error message
+      const errorMessage = err.response?.data?.message || err.message || "Failed to delete product";
+      setError(`Failed to delete product: ${errorMessage}. Please try again.`);
     }
   };
 
@@ -177,20 +276,29 @@ const AddProduct = () => {
     return (
       <Stack spacing={2} p={4} alignItems="center">
         <CircularProgress />
-        <Typography>Loading form data...</Typography>
+        <Typography>Loading product data...</Typography>
+      </Stack>
+    );
+  }
+
+  // Error state
+  if (error && !form.name) {
+    return (
+      <Stack spacing={2} p={4}>
+        <Alert severity="error">{error}</Alert>
+        <Button variant="outlined" onClick={handleCancel}>
+          Go Back
+        </Button>
       </Stack>
     );
   }
 
   return (
-    <>
-    <BackButton />
     <Stack spacing={2} p={4}>
-      
-      <Typography variant="h5">Add New Product</Typography>
+      <Typography variant="h5">Edit Product (ID: {productId})</Typography>
 
       {error && <Alert severity="error">{error}</Alert>}
-      {success && <Alert severity="success">Product added successfully!</Alert>}
+      {success && <Alert severity="success">Product updated successfully!</Alert>}
 
       <TextField
         label="Name"
@@ -262,15 +370,21 @@ const AddProduct = () => {
 
       <Stack direction="row" spacing={2}>
         <Button variant="contained" onClick={handleSubmit}>
-          Save
+          Update Product
         </Button>
         <Button variant="outlined" onClick={handleCancel}>
           Cancel
         </Button>
+        <Button 
+          variant="contained" 
+          color="error" 
+          onClick={handleDelete}
+        >
+          Delete
+        </Button>
       </Stack>
     </Stack>
-  </>
   );
 };
 
-export default AddProduct;
+export default EditProduct;

@@ -23,5 +23,6 @@ export async function adminLogin() {
     username: "adminAccount",
     password: "adminPW"
   });
+  console.log("Admin login response:", response.data);
   return response.data;
 }

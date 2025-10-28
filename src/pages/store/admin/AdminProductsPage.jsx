@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BackButton from "../common/BackButton";
 import { 
   Button, 
   Paper, 
@@ -145,6 +146,8 @@ export default function ProductsPage() {
   }
 
   return (
+    <>
+      <BackButton />
     <Paper sx={{ p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
         <h2>Items</h2>
@@ -242,7 +245,7 @@ export default function ProductsPage() {
                   <TableCell>{subGenre}</TableCell>
                   <TableCell>{p.LastUpdatedBy ?? "—"}</TableCell>
                   <TableCell align="right">
-                    <Button component={Link} to={`/admin/products/${p.ID}`}>Edit</Button>
+                    <Button component={Link} to={`/admin/EditProduct/${p.ID}`}>Edit</Button>
                   </TableCell>
                 </TableRow>
               );
@@ -251,5 +254,6 @@ export default function ProductsPage() {
         </TableBody>
       </Table>
     </Paper>
+  </>
   );
 }
